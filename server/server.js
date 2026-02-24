@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const authRoutes = require("./routes/authRoutes");
 const User = require("./models/User");
+const transactionRoutes = require("./routes/transactionRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 // Basic test route
 app.get("/", (req, res) => {
