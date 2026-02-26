@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const authRoutes = require("./routes/authRoutes");
 const User = require("./models/User");
 const transactionRoutes = require("./routes/transactionRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/budgets", budgetRoutes);
 
 // Basic test route
 app.get("/", (req, res) => {

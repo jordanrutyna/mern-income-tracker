@@ -1,5 +1,6 @@
 const Transaction = require("../models/Transaction");
 const mongoose = require("mongoose");
+const Budget = require("../models/Budget");
 
 // Create transaction
 exports.createTransaction = async (req, res) => {
@@ -102,14 +103,26 @@ exports.getSummary = async (req, res) => {
       if (item._id === "expense") totalExpenses = item.total;
     });
 
+    const budgets = await Budget.find({ user: userId });
+
+    const categoryBreakdown = categories.map((cat) => {
+      const budget = budgets.find((b) => b.category === cat._id);
+
+      const limit = budget ? budget.monthlyLimit : null;
+
+      return {
+        category: cat._id,
+        total: cat.total,
+        limit,
+        overBudget: limit ? cat.total > limit : false,
+      };
+    });
+
     res.json({
       totalIncome,
       totalExpenses,
       netBalance: totalIncome - totalExpenses,
-      categoryBreakdown: categories.map((cat) => ({
-        category: cat._id,
-        total: cat.total,
-      })),
+      categoryBreakdown,
     });
   } catch (error) {
     console.error(error);
