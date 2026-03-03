@@ -87,6 +87,12 @@ exports.getSummary = async (req, res) => {
                 total: { $sum: "$amount" },
               },
             },
+            // {
+            //   $sort: { _id: 1 }, // alphabetical by category
+            // },
+            { 
+              $sort: { total: -1 } // order by highest spending
+            },
           ],
         },
       },
