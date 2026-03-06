@@ -1,34 +1,38 @@
 require("dotenv").config();
-console.log("MONGO_URI exists:", !!process.env.MONGO_URI);
-console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
 
 const PORT = process.env.PORT || 5050;
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+
 const authRoutes = require("./routes/authRoutes");
-const User = require("./models/User");
 const transactionRoutes = require("./routes/transactionRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: "*"
-}));
+app.use(cors({ origin: "*" }));
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
+
+//Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/budgets", budgetRoutes);
 
-// Basic test route
+// Basic route
 app.get("/", (req, res) => {
   res.send("Income Tracker API is running 🚀");
+});
+
+// Health check route
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 // Connect to MongoDB
@@ -44,10 +48,3 @@ mongoose
     console.error("❌ MongoDB connection error:", err);
   });
 
-
-//temporary
-const authMiddleware = require("./middleware/authMiddleware");
-
-app.get("/api/protected", authMiddleware, (req, res) => {
-  res.json({ message: "You accessed a protected route!", user: req.user });
-});
